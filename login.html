@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧物流识别系统 - 登录</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #409EFF, #36D1DC);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", serif;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h2 {
+            color: #409EFF;
+            margin: 0;
+        }
+
+        .login-header i {
+            font-size: 48px;
+            color: #409EFF;
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            margin-top: 20px;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #909399;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-box-open"></i>
+                <h2>智慧物流识别系统</h2>
+            </div>
+            <el-form class="login-form" :model="loginForm" :rules="rules" ref="loginForm">
+                <el-form-item prop="username">
+                    <el-input 
+                        v-model="loginForm.username"
+                        prefix-icon="el-icon-user"
+                        placeholder="用户名">
+                    </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input 
+                        v-model="loginForm.password"
+                        prefix-icon="el-icon-lock"
+                        type="password"
+                        placeholder="密码">
+                    </el-input>
+                </el-form-item>
+                <div class="remember-me">
+                    <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
+                </div>
+                <el-form-item>
+                    <el-button type="primary" @click="handleLogin" style="width: 100%">登录</el-button>
+                </el-form-item>
+            </el-form>
+            <div class="login-footer">
+                <p>© 2024 智慧物流识别系统</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <script>
+        // 添加API_URL常量
+        const API_URL = 'http://localhost:5000';
+
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    loginForm: {
+                        username: '',
+                        password: '',
+                        remember: false
+                    },
+                    rules: {
+                        username: [
+                            { required: true, message: '请输入用户名', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请输入密码', trigger: 'blur' }
+                        ]
+                    }
+                }
+            },
+            methods: {
+                async handleLogin() {
+                    try {
+                        this.$refs.loginForm.validate(async valid => {
+                            if (valid) {
+                                const response = await fetch(`${API_URL}/api/login`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(this.loginForm)
+                                });
+
+                                const data = await response.json();
+                                
+                                if (data.status === 'success') {
+                                    localStorage.setItem('auth_token', 'Bearer ' + data.user.username);
+                                    localStorage.setItem('user', JSON.stringify(data.user));
+                                    window.location.href = 'index.html';
+                                } else {
+                                    this.$message.error(data.message || '登录失败');
+                                }
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        this.$message.error('网络连接错误，请检查后端服务是否启动');
+                    }
+                }
+            },
+            mounted() {
+                // 检查是否有记住的用户
+                const rememberedUser = localStorage.getItem('rememberedUser');
+                if (rememberedUser) {
+                    this.loginForm.username = rememberedUser;
+                    this.loginForm.remember = true;
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
