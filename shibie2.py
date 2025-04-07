@@ -18,6 +18,9 @@ from functools import wraps
 app = Flask(__name__)
 CORS(app)
 
+# 动态下载模型（放在全局作用域，避免每次请求重复下载）
+MODEL_URL = 'https://github.com/ultralytics/assets/releases/download/v8.1.0/yolov8n.pt'
+model = YOLO(MODEL_URL)  # 首次运行时自动下载
 # 添加用户验证相关代码
 users = {
     'admin': {'password': 'admin123', 'role': 'admin'},

@@ -1,3 +1,3 @@
-flask
-opencv-python-headless
-ultralytics
+# 使用轻量级依赖
+ultralytics>=8.0.0
+opencv-python-headless  # 替代 opencv-python
