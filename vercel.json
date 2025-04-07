@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "builds": [{
-    "src": "shibie2.py",
-    "use": "@vercel/python",
-    "config": {
-      "maxLambdaSize": "15mb",  // 调大内存限制
-      "includeFiles": ["requirements.txt"]
+  "builds": [
+    {
+      "src": "shibie2.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "includeFiles": ["requirements.txt"]
+      }
     }
-  }],
-  "routes": [{ "src": "/(.*)", "dest": "shibie2.py" }]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "shibie2.py"
+    }
+  ]
 }
